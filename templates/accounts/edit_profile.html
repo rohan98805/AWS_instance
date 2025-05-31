@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div style="
+  max-width: 700px; 
+  margin: 3rem auto; 
+  padding: 1rem 1.5rem; 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+  border-radius: 12px; 
+  font-family: Arial, sans-serif; 
+  background-color: #fff;
+">
+  <div>
+    <h3 style="color: #0d6efd; margin-bottom: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+      ✏️ Edit Your Profile
+    </h3>
+
+    <form method="post" enctype="multipart/form-data" novalidate style="display: flex; flex-direction: column;">
+      {% csrf_token %}
+
+      {% for field in form %}
+        <div style="margin-bottom: 1.5rem; display: flex; flex-direction: column;">
+          <label for="{{ field.id_for_label }}" style="font-weight: 600; margin-bottom: 0.3rem;">
+            {{ field.label }}
+          </label>
+
+          {% if field.name in 'profile_photo adhar_card pan_card' %}
+            {% if field.value %}
+              <div style="margin-bottom: 0.75rem;">
+                <img src="{{ field.value.url }}" alt="Current Image" style="max-height: 150px; border-radius: 6px; border: 1px solid #ccc; object-fit: contain;">
+              </div>
+            {% endif %}
+          {% endif %}
+
+          {{ field }}
+
+          {% if field.help_text %}
+            <small style="color: #6c757d; margin-top: 0.25rem;">{{ field.help_text }}</small>
+          {% endif %}
+
+          {% for error in field.errors %}
+            <small style="color: #dc3545; margin-top: 0.25rem;">{{ error }}</small>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+        <button type="submit" style="
+          background-color: #198754;
+          border: none;
+          padding: 0.5rem 1.2rem;
+          color: white;
+          font-weight: 600;
+          border-radius: 6px;
+          cursor: pointer;
+          user-select: none;
+          transition: background-color 0.3s ease;
+        " onmouseover="this.style.backgroundColor='#145c32';" onmouseout="this.style.backgroundColor='#198754';">
+          💾 Save Changes
+        </button>
+
+        <a href="{% url 'profile' %}" style="
+          padding: 0.5rem 1.2rem;
+          border: 2px solid #6c757d;
+          color: #6c757d;
+          text-decoration: none;
+          font-weight: 600;
+          border-radius: 6px;
+          display: inline-flex;
+          align-items: center;
+          user-select: none;
+          transition: background-color 0.3s ease, color 0.3s ease;
+        " onmouseover="this.style.backgroundColor='#6c757d'; this.style.color='white';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#6c757d';">
+          ← Back to Profile
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 900px; margin: 2rem auto; font-family: Arial, sans-serif;">
+
+  <h3 style="color: #004085; margin-bottom: 1rem;">
+    <i class="fas fa-balance-scale" style="color: #004085; margin-right: 0.5rem;"></i>Legal Cases
+  </h3>
+
+  <a href="{% url 'legalcase_create' %}" 
+     style="display: inline-block; background-color: #007bff; color: white; padding: 0.5rem 1rem; border-radius: 5px; text-decoration: none; margin-bottom: 1rem;">
+    <i class="fas fa-plus-circle" style="margin-right: 0.4rem;"></i> Add Case
+  </a>
+
+  <table style="width: 100%; border-collapse: collapse; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    <thead style="background-color: #343a40; color: white;">
+      <tr>
+        <th style="padding: 0.75rem; border: 1px solid #dee2e6; text-align: left;">Case Number</th>
+        <th style="padding: 0.75rem; border: 1px solid #dee2e6; text-align: left;">Land</th>
+        <th style="padding: 0.75rem; border: 1px solid #dee2e6; text-align: left;">Document</th>
+        <th style="padding: 0.75rem; border: 1px solid #dee2e6; text-align: left;">Remarks</th>
+        <th style="padding: 0.75rem; border: 1px solid #dee2e6; text-align: center; width: 130px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for case in cases %}
+      <tr style="background-color: {% cycle '#f8f9fa' '#e9ecef' %};">
+        <td style="padding: 0.75rem; border: 1px solid #dee2e6;">{{ case.case_number }}</td>
+        <td style="padding: 0.75rem; border: 1px solid #dee2e6;">{{ case.land }}</td>
+        <td style="padding: 0.75rem; border: 1px solid #dee2e6;">
+          <a href="{{ case.document.url }}" target="_blank" style="color: #007bff; text-decoration: none;">View</a>
+        </td>
+        <td style="padding: 0.75rem; border: 1px solid #dee2e6;">{{ case.remarks }}</td>
+        <td style="padding: 0.75rem; border: 1px solid #dee2e6; text-align: center;">
+          {% if user.is_staff %}
+            <a href="{% url 'legalcase_update' case.id %}" 
+              style="background-color: #ffc107; color: black; padding: 0.3rem 0.6rem; border-radius: 4px; text-decoration: none; margin-right: 0.3rem;" 
+              title="Edit">
+              Edit
+            </a>
+            <a href="{% url 'legalcase_delete' case.id %}" 
+              style="background-color: #dc3545; color: white; padding: 0.3rem 0.6rem; border-radius: 4px; text-decoration: none;" 
+              title="Delete">
+              Delete
+            </a>
+          {% else %}
+              <p>Only Admin</p>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" style="padding: 1rem; text-align: center; border: 1px solid #dee2e6; color: #6c757d;">
+          No cases found.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+{% endblock %}

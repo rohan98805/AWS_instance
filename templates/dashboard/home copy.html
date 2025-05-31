@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+  <h1 class="mb-4 text-center">Available Land Properties</h1>
+
+  {% for item in property_data %}
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+        <h4 class="card-title text-primary">{{ item.land.place }} - {{ item.land.location }}</h4>
+        <p class="mb-1"><strong>Land Use Type:</strong> {{ item.land.get_land_use_type_display }}</p>
+        <p class="mb-1"><strong>Expected Price:</strong> ₹{{ item.land.expected_price }}</p>
+        <p class="mb-3"><strong>Is Sold:</strong>
+          <span class="badge {% if item.land.is_sold %}bg-danger{% else %}bg-success{% endif %}">
+            {{ item.land.is_sold|yesno:"Yes,No" }}
+          </span>
+        </p>
+
+        <h5 class="mt-4">Sellers</h5>
+        <ul class="list-group list-group-flush mb-3">
+          {% for seller in item.land.sellers.all %}
+            <li class="list-group-item">
+              {{ seller.user.username }}
+              {% if seller.verified_by_admin %}
+                <span class="badge bg-success ms-2">Verified</span>
+              {% endif %}
+            </li>
+          {% empty %}
+            <li class="list-group-item text-muted">No sellers listed.</li>
+          {% endfor %}
+        </ul>
+
+        <h5>Legal Cases</h5>
+        <ul class="list-group list-group-flush mb-3">
+          {% for case in item.legal_cases %}
+            <li class="list-group-item">
+              <strong>Case #:</strong> {{ case.case_number }}<br>
+              <strong>Remarks:</strong> {{ case.remarks|default:"No remarks" }}<br>
+              <a href="{{ case.document.url }}" target="_blank" class="btn btn-outline-primary btn-sm mt-2">View Document</a>
+            </li>
+          {% empty %}
+            <li class="list-group-item text-muted">No legal cases.</li>
+          {% endfor %}
+        </ul>
+
+        <h5>Ownership History</h5>
+        <ol class="list-group list-group-numbered mb-3">
+          {% for owner in item.ownership_history %}
+            <li class="list-group-item">
+              <strong>Owner:</strong> {{ owner.owner_name }}
+              {% if owner.new_owner %} (User: {{ owner.new_owner.username }}){% endif %}<br>
+              <strong>Order:</strong> {{ owner.ownership_order }}
+            </li>
+          {% empty %}
+            <li class="list-group-item text-muted">No ownership history available.</li>
+          {% endfor %}
+        </ol>
+
+        <h5>Images</h5>
+        <div class="d-flex flex-wrap gap-2">
+          {% for img in item.images %}
+            <img src="{{ img.image.url }}" alt="Image of {{ item.land.place }}" class="img-thumbnail" style="max-height: 150px;">
+          {% empty %}
+            <p class="text-muted">No images available.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="alert alert-warning text-center">No land properties found.</div>
+  {% endfor %}
+</div>
+{% endblock %}

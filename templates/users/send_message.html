@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 600px; margin: 2rem auto; font-family: Arial, sans-serif;">
+  <h2 style="margin-bottom: 1.5rem;">Send Message</h2>
+
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div style="color: red; margin-bottom: 1rem;">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    {% for field in form %}
+      <div style="margin-bottom: 1rem;">
+        <label for="{{ field.id_for_label }}" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
+          {{ field.label }}
+        </label>
+        {{ field }}
+        {% if field.help_text %}
+          <div style="font-size: 0.85rem; color: #6c757d;">{{ field.help_text }}</div>
+        {% endif %}
+        {% if field.errors %}
+          <div style="color: red; font-size: 0.9rem;">{{ field.errors }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <button type="submit" style="
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+    ">Send</button>
+  </form>
+
+  <div style="margin-top: 1.5rem;">
+    <a href="{% url 'inbox' %}" style="
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: #6c757d;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    ">Back to Inbox</a>
+  </div>
+</div>
+{% endblock %}

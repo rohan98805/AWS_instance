@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 900px; margin: 2rem auto; font-family: Arial, sans-serif;">
+
+  <h2 style="color: #222; margin-bottom: 1rem;">All Properties</h2>
+
+  <a href="{% url 'landproperty_create' %}" 
+     style="display: inline-block; background-color: #007bff; color: white; padding: 0.5rem 1rem; border-radius: 5px; text-decoration: none; margin-bottom: 1rem;">
+    Add New
+  </a>
+
+  <table style="width: 100%; border-collapse: collapse; box-shadow: 0 0 8px rgba(0,0,0,0.1);">
+    <thead style="background-color: #343a40; color: white;">
+      <tr>
+        <th style="padding: 0.75rem; border: 1px solid #ddd; text-align: left;">Place</th>
+        <th style="padding: 0.75rem; border: 1px solid #ddd; text-align: left;">Location</th>
+        <th style="padding: 0.75rem; border: 1px solid #ddd; text-align: right;">Price</th>
+        <th style="padding: 0.75rem; border: 1px solid #ddd; text-align: center; width: 140px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for property in properties %}
+      <tr style="background-color: {% cycle '#f9f9f9' '#ffffff' %};">
+        <td style="padding: 0.6rem; border: 1px solid #ddd;">{{ property.place }}</td>
+        <td style="padding: 0.6rem; border: 1px solid #ddd;">{{ property.location }}</td>
+        <td style="padding: 0.6rem; border: 1px solid #ddd; text-align: right;">{{ property.expected_price }}</td>
+        <td style="padding: 0.6rem; border: 1px solid #ddd; text-align: center;">
+          {% if user.is_staff %}
+            <a href="{% url 'landproperty_update' property.pk %}" 
+              style="color: #ffc107; text-decoration: none; margin-right: 0.5rem;" 
+              title="Edit">Edit</a>|
+            <a href="{% url 'landproperty_delete' property.pk %}" 
+              style="color: #dc3545; text-decoration: none; margin-left: 0.5rem;" 
+              title="Delete">Delete</a>
+          {% else %}
+              <p>Only Admin</p>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4" style="padding: 1rem; border: 1px solid #ddd; text-align: center; color: #777;">
+          No properties found.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

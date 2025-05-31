@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 1000px; margin: 2rem auto; padding: 1rem; font-family: Arial, sans-serif;">
+    <h3 style="margin-bottom: 1rem;">📜 Ownership History</h3>
+
+    <a href="{% url 'ownershiphistory_create' %}" style="
+        display: inline-block;
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    ">➕ Add History</a>
+
+    <div style="overflow-x: auto;">
+        <table style="
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        ">
+            <thead style="background-color: #343a40; color: white;">
+                <tr>
+                    <th style="padding: 10px; border: 1px solid #dee2e6;">Land</th>
+                    <th style="padding: 10px; border: 1px solid #dee2e6;">Owner Name</th>
+                    <th style="padding: 10px; border: 1px solid #dee2e6;">Order</th>
+                    <th style="padding: 10px; border: 1px solid #dee2e6;">New Owner</th>
+                    <th style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in history %}
+                <tr style="background-color: {{ forloop.counter0|divisibleby:2|yesno:'#f8f9fa,#ffffff' }};">
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">{{ record.land }}</td>
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">{{ record.owner_name }}</td>
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">{{ record.ownership_order }}</td>
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">{{ record.new_owner }}</td>
+                    <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">
+                        {% if user.is_staff %}
+                            <a href="{% url 'ownershiphistory_update' record.id %}" title="Edit {{ record.id }}" style="
+                                padding: 5px 10px;
+                                background-color: #ffc107;
+                                color: black;
+                                text-decoration: none;
+                                border-radius: 3px;
+                                margin-right: 5px;
+                            ">✏️</a>
+                            <!-- <a href="{% url 'ownershiphistory_delete' record.id %}" title="Delete {{ record.id }}" style="
+                                padding: 5px 10px;
+                                background-color: #dc3545;
+                                color: white;
+                                text-decoration: none;
+                                border-radius: 3px;
+                            ">🗑️</a> -->
+                        {% else %}
+                            <p>Only Admin</p>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 15px; border: 1px solid #dee2e6;">
+                        No records found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

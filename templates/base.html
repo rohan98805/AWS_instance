@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Smarter Land Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Smarter Land Management platform for secure land transactions, verified sellers, price comparison, and admin control." />
+    <style>
+        :root {
+            --primary-color: #004080;
+            --primary-light: #0059b3;
+            --text-color: #333;
+            --bg-color: #f9f9f9;
+            --card-shadow: rgba(0,0,0,0.1);
+            --card-shadow-hover: rgba(0,0,0,0.15);
+        }
+
+        /* Base Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a, button {
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--primary-color);
+            padding: 10px 20px;
+            color: white;
+            flex-wrap: wrap;
+            user-select: none;
+        }
+        .navbar-brand a {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .nav-item {
+            margin-left: 20px;
+        }
+        .nav-link, .nav-button {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font: inherit;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .nav-link:hover, .nav-button:hover,
+        .nav-link:focus, .nav-button:focus {
+            color: var(--primary-light);
+            outline: none;
+            text-decoration: underline;
+        }
+        /* Make buttons accessible with keyboard */
+        .nav-button {
+            display: inline-block;
+        }
+
+        /* Main content */
+        .container {
+            padding: 20px;
+            max-width: 100%;
+            margin: auto;
+            background: white;
+            min-height: 60vh;
+            box-sizing: border-box;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px var(--card-shadow);
+        }
+
+        /* Sections for About, FAQ, Contact */
+        section.static-content {
+            display: none;
+            padding-top: 20px;
+        }
+        section.static-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        /* FAQ styling */
+        .faq-item {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .faq-question {
+            font-weight: bold;
+            cursor: pointer;
+            color: var(--primary-color);
+            padding: 8px 5px;
+            border-radius: 4px;
+            user-select: none;
+        }
+        .faq-question:focus {
+            outline: 2px solid var(--primary-light);
+        }
+        .faq-question:hover {
+            background: var(--primary-light);
+            color: white;
+        }
+        .faq-answer {
+            margin-left: 15px;
+            margin-top: 8px;
+            display: none;
+            font-weight: normal;
+            font-size: 1rem;
+            color: #444;
+        }
+        .faq-answer.show {
+            display: block;
+            animation: slideDown 0.3s ease forwards;
+        }
+        @keyframes slideDown {
+            from {max-height: 0; opacity: 0;}
+            to {max-height: 500px; opacity: 1;}
+        }
+
+        /* Footer */
+        footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            color: var(--text-color);
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: var(--primary-color);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        footer a:hover, footer a:focus {
+            text-decoration: underline;
+            outline: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .navbar-nav {
+                flex-direction: column;
+                width: 100%;
+            }
+            .nav-item {
+                margin: 10px 0;
+            }
+            .container {
+                padding: 15px;
+            }
+        }
+
+        /* Slider for Land Management Features */
+        .slider {
+            position: relative;
+            overflow: hidden;
+            max-width: 100%;
+            margin: 30px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px var(--card-shadow);
+        }
+        .slides {
+            display: flex;
+            width: 300%;
+            animation: slideAnimation 15s infinite;
+        }
+        .slide {
+            width: 1455px;
+            flex-shrink: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 40px 20px 20px;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 1.25rem;
+            border-radius: 8px;
+            user-select: none;
+            position: relative;
+        }
+        .slide img {
+            width: 100%;
+            max-height: 500px;
+            border-radius: 8px 8px 0 0;
+            pointer-events: none;
+            user-select: none;
+        }
+        .slider .slide {
+          position: relative;
+          color: rgb(238, 192, 192); /* make text white */
+          text-shadow: 2px 2px 4px rgba(0,0,0,0.7); /* add shadow for contrast */
+          padding: 20px;
+          background: rgba(0, 0, 0, 0.4); /* semi-transparent dark overlay behind text */
+          z-index: 10;
+        }
+
+        .slider .slide h3,
+        .slider .slide p {
+          position: relative;
+          z-index: 10;
+        }
+
+        .slider .slide img {
+          width: 100%;
+          height: auto;
+          display: block;
+        }
+
+        /* Optional: if the text overlays the image and you want a dark overlay */
+        .slider .slide::before {
+          content: "";
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(0,0,0,0.3); /* dark overlay */
+          z-index: 5;
+        }
+
+        .slider:hover .slides {
+            animation-play-state: paused;
+        }
+        @keyframes slideAnimation {
+            0%, 33% { transform: translateX(0); }
+            36%, 66% { transform: translateX(-100%); }
+            69%, 99% { transform: translateX(-200%); }
+            100% { transform: translateX(0); }
+        }
+
+        /* Card Effects for Key Features */
+        .features {
+            display: flex;
+            gap: 20px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .feature-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 6px 15px var(--card-shadow);
+            padding: 20px;
+            max-width: 280px;
+            flex: 1 1 280px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: default;
+            user-select: none;
+        }
+        .feature-card:hover, .feature-card:focus-within {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px var(--card-shadow-hover);
+            outline: none;
+        }
+        .feature-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.25rem;
+        }
+        .feature-card p {
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="navbar-brand">
+            <a href="/" aria-label="LandSmart Home">LandSmart</a>
+        </div>
+        <ul class="navbar-nav">
+            <li class="nav-item"><a href="{% url 'home' %}" class="nav-link">Home</a></li>
+
+            <li class="nav-item"><button class="nav-button" data-target="about-section" aria-controls="about-section" aria-expanded="false">About</button></li>
+            <li class="nav-item"><button class="nav-button" data-target="faq-section" aria-controls="faq-section" aria-expanded="false">FAQ</button></li>
+            <li class="nav-item"><button class="nav-button" data-target="contact-section" aria-controls="contact-section" aria-expanded="false">Contact</button></li>
+            
+            {% if user.is_authenticated %}
+
+                <!-- <li class="nav-item"><a href="{% url 'admin_customuser_list' %}" class="nav-link"> User List </a></li>  -->
+                {% if request.user.is_staff %}
+                <li>
+                    <a href="{% url 'admin_customuser_list' %}" 
+                    style="color: #ffc107; text-decoration: none; font-weight: bold;">
+                    Manage Users
+                    </a>
+                </li>
+                {% endif %}
+
+               <!-- <li class="nav-item"><a href="{% url 'seller_profile' %}" class="nav-link">Seller Profile </a></li> -->
+                {% if request.user.is_authenticated and request.user.is_buyer %}
+                    <li class="nav-item">
+                        <a href="{% url 'buyer_profile' %}" class="nav-link">Buyer Profile</a>
+                    </li>
+                {% endif %}
+
+
+                <li class="nav-item"><a href="{% url 'landproperty_list' %}" class="nav-link">Land Listings</a></li>
+
+                <li class="nav-item"><a href="{% url 'profile' %}" class="nav-link">Profile</a></li>                
+    
+                <li class="nav-item"><a href="{% url 'legalcase_list' %}" class="nav-link">Legalcase List</a></li>
+
+                <li class="nav-item"><a href="{% url 'ownershiphistory_list' %}" class="nav-link">Ownership History List</a></li>
+
+                <li class="nav-item"><a href="{% url 'inbox' %}" class="nav-link">Inbox</a></li>
+                <li class="nav-item">
+                    <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-button" aria-label="Logout">Logout</button>
+                    </form>
+                </li>
+            {% else %}
+                <li class="nav-item"><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+                <li class="nav-item"><a href="{% url 'register' %}" class="nav-link">Register</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- Main container -->
+    <div class="container" role="main">
+
+        <!-- About Section -->
+        <section id="about-section" class="static-content" aria-hidden="true" tabindex="-1" role="region" aria-label="About LandSmart">
+            <h2>About LandSmart</h2>
+            <p>LandSmart is a smarter land management platform that helps buyers and sellers transact securely. Verified sellers can post property details for admin approval, while verified buyers can compare prices and message sellers directly. The platform ensures verified users, safe transactions, and a transparent marketplace for land records and properties.</p>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq-section" class="static-content" aria-hidden="true" tabindex="-1" role="region" aria-label="Frequently Asked Questions">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false" aria-controls="faq1" id="faq1-btn">
+                    How does LandSmart verify sellers?
+                </button>
+                <div class="faq-answer" id="faq1" role="region" aria-labelledby="faq1-btn">
+                    LandSmart requires sellers to upload government ID and ownership documents. The admin reviews these documents before verifying the seller status.
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false" aria-controls="faq2" id="faq2-btn">
+                    Can I compare prices before buying?
+                </button>
+                <div class="faq-answer" id="faq2" role="region" aria-labelledby="faq2-btn">
+                    Yes, verified buyers can view multiple listings and compare prices without any prediction models involved.
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false" aria-controls="faq3" id="faq3-btn">
+                    How do I contact sellers?
+                </button>
+                <div class="faq-answer" id="faq3" role="region" aria-labelledby="faq3-btn">
+                    Once verified, buyers can message sellers directly through the platform’s secure messaging system.
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact-section" class="static-content">
+            <h2>Contact Us</h2>
+            <p>If you have any questions, concerns, or need assistance, please send us a message via the <a href="{% url 'send_message' %}">Contact Form</a>.</p>
+            <p>Email: support@landsmart.com</p>
+            <p>Phone: +1 (555) 123-4567</p>
+            <p>Address: 123 LandSmart Avenue, Real Estate City, Country</p>
+        </section>
+
+        {% block content %}
+        {% endblock %}
+
+        <!-- Land Management Features Slider -->
+        <div class="slider" aria-label="Land Management Features Highlights">
+            <div class="slides" role="list">
+                <article class="slide" role="listitem">
+                    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80" alt="Verified Seller Document Verification" />
+                    <h3>Verified Sellers</h3>
+                    <p>Sellers must upload valid ID and property documents for admin verification ensuring trustworthy listings.</p>
+                </article>
+                <article class="slide" role="listitem">
+                    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80" alt="Price Comparison Graphs" />
+                    <h3>Price Comparison</h3>
+                    <p>Compare prices of different properties to make informed decisions without prediction models.</p>
+                </article>
+                <article class="slide" role="listitem">
+                    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80" alt="Messaging between Buyers and Sellers" />
+                    <h3>Secure Messaging</h3>
+                    <p>Communicate directly with sellers once verified through our secure internal messaging system.</p>
+                </article>
+            </div>
+        </div>
+
+        <!-- Key Features Cards -->
+        <div class="features" aria-label="Key Features of LandSmart">
+            <article class="feature-card" tabindex="0">
+                <h3>Admin Approval</h3>
+                <p>Admins review and approve seller verifications and property listings to maintain platform integrity.</p>
+            </article>
+            <article class="feature-card" tabindex="0">
+                <h3>Verified Buyers</h3>
+                <p>Buyers are verified to ensure serious participation in the marketplace, creating a secure environment.</p>
+            </article>
+            <article class="feature-card" tabindex="0">
+                <h3>Property Listings</h3>
+                <p>Detailed property listings with images and documentation to help buyers make confident decisions.</p>
+            </article>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer role="contentinfo">
+        <p>&copy; 2025 LandSmart. All rights reserved. | <a href="#contact-section">Contact Support</a></p>
+    </footer>
+
+    <script>
+        // Show/hide static content (About, FAQ, Contact)
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.getAttribute('data-target');
+                const allSections = document.querySelectorAll('section.static-content');
+
+                allSections.forEach(section => {
+                    if (section.id === targetId) {
+                        const isActive = section.classList.contains('active');
+                        if (isActive) {
+                            // Hide if already active
+                            section.classList.remove('active');
+                            section.setAttribute('aria-hidden', 'true');
+                            button.setAttribute('aria-expanded', 'false');
+                        } else {
+                            section.classList.add('active');
+                            section.setAttribute('aria-hidden', 'false');
+                            section.focus();
+                            button.setAttribute('aria-expanded', 'true');
+                        }
+                    } else {
+                        section.classList.remove('active');
+                        section.setAttribute('aria-hidden', 'true');
+                        // Reset aria-expanded for other buttons
+                        const otherBtn = document.querySelector(`button[data-target="${section.id}"]`);
+                        if (otherBtn) {
+                            otherBtn.setAttribute('aria-expanded', 'false');
+                        }
+                    }
+                });
+            });
+        });
+
+        // FAQ toggle logic with accessibility
+        document.querySelectorAll('.faq-question').forEach(faqBtn => {
+            faqBtn.addEventListener('click', () => {
+                const answerId = faqBtn.getAttribute('aria-controls');
+                const answer = document.getElementById(answerId);
+                const expanded = faqBtn.getAttribute('aria-expanded') === 'true';
+                if (expanded) {
+                    faqBtn.setAttribute('aria-expanded', 'false');
+                    answer.classList.remove('show');
+                } else {
+                    faqBtn.setAttribute('aria-expanded', 'true');
+                    answer.classList.add('show');
+                }
+            });
+
+            faqBtn.addEventListener('keydown', e => {
+                // Allow toggling FAQ with Enter or Space keys
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    faqBtn.click();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

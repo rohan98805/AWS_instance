@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 480px; margin: 4rem auto; font-family: Arial, sans-serif; padding: 1.5rem; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+  <h2 style="color: #dc3545; margin-bottom: 1rem;">Confirm Delete</h2>
+  <p style="font-size: 1rem; margin-bottom: 2rem;">
+    Are you sure you want to delete this <strong>{{ title }}</strong>?
+  </p>
+
+  <form method="post" style="display: flex; gap: 1rem;">
+    {% csrf_token %}
+    <button type="submit" style="
+      flex: 1;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    " onmouseover="this.style.backgroundColor='#b52a37'" onmouseout="this.style.backgroundColor='#dc3545'">
+      Yes, Delete
+    </button>
+
+    <a href="{% url request.resolver_match.view_name|slice:':-7' %}_list %}" style="
+      flex: 1;
+      text-align: center;
+      text-decoration: none;
+      padding: 0.6rem 1rem;
+      border-radius: 5px;
+      border: 1px solid #6c757d;
+      color: #6c757d;
+      font-weight: bold;
+      line-height: 1.4;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    " onmouseover="this.style.backgroundColor='#6c757d'; this.style.color='white'" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#6c757d'">
+      Cancel
+    </a>
+  </form>
+</div>
+{% endblock %}
