@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div style="
+  max-width: 900px;
+  margin: 3rem auto;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+">
+  <div style="display: flex; flex-wrap: wrap;">
+    <div style="flex: 0 0 150px; text-align: center; margin-right: 2rem;">
+      {% if user.profile_photo %}
+        <img src="{{ user.profile_photo.url }}" alt="Profile Photo" style="width: 150px; height: 150px; border-radius: 50%; border: 1px solid #ddd; object-fit: cover; margin-bottom: 1rem;">
+      {% else %}
+        <img src="{% static 'default_profile.jpeg' %}" alt="No Photo" style="width: 150px; height: 150px; border-radius: 50%; border: 1px solid #ddd; object-fit: cover; margin-bottom: 1rem;">
+      {% endif %}
+    </div>
+
+    <div style="flex: 1; min-width: 300px;">
+      <h3 style="margin-top: 0; margin-bottom: 0.5rem;">
+        👤 Profile
+      </h3>
+      <hr style="border: none; border-top: 1px solid #ccc; margin: 0.5rem 0 1.5rem;">
+
+      <p style="margin: 0.3rem 0;">
+        <strong>👤 Username:</strong> {{ user.username }}
+      </p>
+      <p style="margin: 0.3rem 0;">
+        <strong>📧 Email:</strong> {{ user.email }}
+      </p>
+      <!-- <p style="margin: 0.3rem 0;">
+        <strong>👛 Ganache Address:</strong> {{ user.ganache_address }}
+      </p> -->
+      <p style="margin: 0.3rem 0;">
+        <strong>🛒 Buyer:</strong> {{ user.is_buyer|yesno:"Yes,No" }}
+      </p>
+      <p style="margin: 0.3rem 0;">
+        <strong>🏷️ Seller:</strong> {{ user.is_seller|yesno:"Yes,No" }}
+      </p>
+
+      <!-- Aadhar and PAN Cards -->
+      <div style="display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
+        <div style="flex: 1; text-align: center; min-width: 140px;">
+          <h5 style="margin-bottom: 0.75rem;">🆔 Aadhar Card</h5>
+          {% if user.adhar_card %}
+            <img src="{{ user.adhar_card.url }}" alt="Aadhar Card" style="max-width: 100%; max-height: 180px; border: 1px solid #ccc; border-radius: 6px; object-fit: contain;">
+          {% else %}
+            <p style="color: #6c757d; font-style: italic;">No Aadhar card uploaded.</p>
+          {% endif %}
+        </div>
+
+        <div style="flex: 1; text-align: center; min-width: 140px;">
+          <h5 style="margin-bottom: 0.75rem;">🆔 PAN Card</h5>
+          {% if user.pan_card %}
+            <img src="{{ user.pan_card.url }}" alt="PAN Card" style="max-width: 100%; max-height: 180px; border: 1px solid #ccc; border-radius: 6px; object-fit: contain;">
+          {% else %}
+            <p style="color: #6c757d; font-style: italic;">No PAN card uploaded.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div style="margin-top: 2rem;">
+        <a href="{% url 'edit_profile' %}" style="
+          display: inline-block;
+          padding: 0.5rem 1rem;
+          margin-right: 0.75rem;
+          background-color: #0d6efd;
+          color: white;
+          text-decoration: none;
+          border-radius: 5px;
+          font-weight: 600;
+          font-size: 0.9rem;
+          user-select: none;
+        " onmouseover="this.style.backgroundColor='#084cdf';" onmouseout="this.style.backgroundColor='#0d6efd';">
+          ✏️ Edit Profile
+        </a>
+
+        <a href="{% url 'change_password' %}" style="
+          display: inline-block;
+          padding: 0.5rem 1rem;
+          background-color: #ffc107;
+          color: #212529;
+          text-decoration: none;
+          border-radius: 5px;
+          font-weight: 600;
+          font-size: 0.9rem;
+          user-select: none;
+        " onmouseover="this.style.backgroundColor='#e0a800';" onmouseout="this.style.backgroundColor='#ffc107';">
+          🔑 Change Password
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login | Land Management System{% endblock %}
+
+{% block content %}
+<div style="
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+">
+    <div style="
+        background-color: #ffffff;
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 420px;
+        width: 100%;
+    ">
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+            <div style="font-size: 2rem; color: #007bff; margin-bottom: 0.5rem;">🔒</div>
+            <h4 style="font-weight: bold; margin: 0;">Land Management Login</h4>
+        </div>
+
+        {% if form.errors %}
+            <div style="
+                background-color: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+                border-radius: 5px;
+                padding: 10px 15px;
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            ">
+                ❗<div><strong>Invalid credentials.</strong> Please try again.</div>
+            </div>
+        {% endif %}
+
+        {% if messages %}
+            {% for message in messages %}
+                <div style="
+                    background-color: {% if message.tags == 'error' %}#f8d7da{% else %}#d1ecf1{% endif %};
+                    color: {% if message.tags == 'error' %}#721c24{% else %}#0c5460{% endif %};
+                    border: 1px solid {% if message.tags == 'error' %}#f5c6cb{% else %}#bee5eb{% endif %};
+                    border-radius: 5px;
+                    padding: 10px 15px;
+                    margin-bottom: 1rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                ">
+                    ℹ️ {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div style="margin-bottom: 1rem;">
+                    <label for="{{ field.id_for_label }}" style="display: block; font-weight: bold; margin-bottom: 0.5rem;">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <div style="font-size: 0.9rem; color: #6c757d;">{{ field.help_text }}</div>
+                    {% endif %}
+                    <div style="color: red; font-size: 0.9rem;">{{ field.errors }}</div>
+                </div>
+            {% endfor %}
+
+            <button type="submit" style="
+                width: 100%;
+                background-color: #007bff;
+                color: white;
+                font-weight: bold;
+                padding: 10px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-top: 1rem;
+            ">
+                🔐 Login
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <p style="color: #6c757d;">Don’t have an account? 
+                <a href="{% url 'register' %}" style="text-decoration: none; color: #007bff;">Register</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
