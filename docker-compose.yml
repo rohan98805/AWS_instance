@@ -1,9 +1,25 @@
-version: '3'
+version: "3.9"
 
 services:
   web:
     build: .
+    container_name: djangoapp
+    command: gunicorn LandManagementSystem.wsgi:application --bind 0.0.0.0:8000
     ports:
       - "8000:8000"
     volumes:
       - .:/app
+    environment:
+      - DJANGO_SETTINGS_MODULE=LandManagementSystem.settings
+    depends_on:
+      - nginx
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - web
