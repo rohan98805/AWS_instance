@@ -4,7 +4,7 @@ pipeline {
         AWS_DEFAULT_REGION = 'us-east-1'
     }
     stages {
-        stage('Test AWS CLI') {
+        stage('Test AWS CLI Authentication') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'aws-credentials',
                                                   usernameVariable: 'AWS_ACCESS_KEY_ID',
