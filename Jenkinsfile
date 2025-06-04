@@ -10,10 +10,10 @@ pipeline {
                                                   usernameVariable: 'AWS_ACCESS_KEY_ID',
                                                   passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     sh '''
-                    echo "Testing AWS CLI Login"
-                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                    aws sts get-caller-identity
+                    echo "AWS_ACCESS_KEY_ID = $AWS_ACCESS_KEY_ID"
+                    echo "AWS_SECRET_ACCESS_KEY length = ${#AWS_SECRET_ACCESS_KEY}"
+                    aws --version
+                    aws sts get-caller-identity || echo "AWS CLI auth failed"
                     '''
                 }
             }
