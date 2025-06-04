@@ -1,43 +1,56 @@
 pipeline {
     agent any
-
     environment {
-        REMOTE_HOST = 'ec2-user@18.214.129.201'
-        REMOTE_KEY = 'ec2-ssh-key' // Jenkins SSH Credentials ID
-        REPO_NAME = 'AWS_instance'
+        AWS_DEFAULT_REGION = "us-east-1"
+        ECR_REPO = "160885287414.dkr.ecr.us-east-1.amazonaws.com/my-app-repo"
+        IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
-                git 'https://github.com/rohan98805/AWS_instance.git'
+                git url: 'https://github.com/rohan98805/AWS_instance.git', branch: 'main'
             }
         }
 
-        stage('Deploy to EC2 with Docker Compose') {
+        stage('Login to AWS ECR') {
             steps {
-                sshagent (credentials: [env.REMOTE_KEY]) {
-                    sh """
-                    ssh -o StrictHostKeyChecking=no $REMOTE_HOST << 'ENDSSH'
-                        cd ~/${REPO_NAME}
-                        git pull origin main
+                sh '''
+                aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPO
+                '''
+            }
+        }
 
-                        docker-compose down || true
-                        docker-compose build
-                        docker-compose up -d
-                    ENDSSH
-                    """
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                docker build -t my-app .
+                docker tag my-app:latest $ECR_REPO:$IMAGE_TAG
+                '''
+            }
+        }
+
+        stage('Push to ECR') {
+            steps {
+                sh '''
+                docker push $ECR_REPO:$IMAGE_TAG
+                '''
+            }
+        }
+
+        stage('Deploy to EC2') {
+            steps {
+                sshagent (credentials: ['your-ec2-ssh-key-id']) {
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no ec2-user@18.214.129.201 << EOF
+                    docker pull $ECR_REPO:$IMAGE_TAG
+                    docker stop my-app || true
+                    docker rm my-app || true
+                    docker run -d --name my-app -p 8000:8000 $ECR_REPO:$IMAGE_TAG
+                    EOF
+                    '''
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            echo "✅ Deployment complete!"
-        }
-        failure {
-            echo "❌ Deployment failed!"
         }
     }
 }
