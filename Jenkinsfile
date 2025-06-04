@@ -7,15 +7,15 @@ pipeline {
         stage('Test AWS CLI Authentication') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'aws-credentials',
-                                                  usernameVariable: 'AWS_ACCESS_KEY_ID',
-                                                  passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                                  usernameVariable: 'AWS_ACCESS_KEY_ID',
+                                  passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     sh '''
-                    echo "AWS_ACCESS_KEY_ID = $AWS_ACCESS_KEY_ID"
-                    echo "AWS_SECRET_ACCESS_KEY length = ${#AWS_SECRET_ACCESS_KEY}"
-                    aws --version
-                    aws sts get-caller-identity || echo "AWS CLI auth failed"
+                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                    aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 160885287414.dkr.ecr.us-east-1.amazonaws.com/my-app-repo
                     '''
                 }
+
             }
         }
     }
