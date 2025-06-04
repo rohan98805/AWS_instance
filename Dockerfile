@@ -1,38 +1,36 @@
-# Dockerfile
-# Stage 1: Build the application
-FROM python:3.8 as builder
+# Use a slim Python base image
+FROM python:3.8-slim
 
+# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+# Set the working directory
 WORKDIR /app
 
-# Install dependencies and build the application
+# Install system dependencies required for psycopg2 and others
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    netcat \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
 COPY requirements.txt .
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY . /app
+# Copy the application code
+COPY . .
 
-# static files 
+# Collect static files and run migrations (optional at build time)
 RUN python manage.py collectstatic --noinput
 
-RUN python manage.py migrate
+# Consider running `migrate` at container startup, not build time
+# RUN python manage.py migrate
 
-# Stage 2: Create a lightweight production image
-#FROM python:3.8-slim
-
-#WORKDIR /app
-
-# Copy the dependencies and static files from the builder stage
-#COPY --from=builder /app /app
-
-# Install dependencies and build the application
-#COPY requirements.txt .
-#RUN pip install --no-cache-dir -r requirements.txt
-
-# PORT
+# Expose the default port
 EXPOSE 8000
 
-#CMD ["python","manage.py","runserver","0.0.0.0:8002"] 
+# Start the application with Gunicorn
 CMD ["gunicorn", "LandManagementSystem.wsgi:application", "--bind", "0.0.0.0:8000"]

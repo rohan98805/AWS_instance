@@ -3,9 +3,8 @@ pipeline {
 
     environment {
         REMOTE_HOST = 'ec2-user@18.214.129.201'
-        REMOTE_KEY = 'ec2-ssh-key' // Jenkins Credential ID
-        IMAGE_NAME = 'djangoapp'
-        CONTAINER_NAME = 'django_container'
+        REMOTE_KEY = 'ec2-ssh-key' // Jenkins SSH Credentials ID
+        REPO_NAME = 'AWS_instance'
     }
 
     stages {
@@ -15,28 +14,30 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t ${IMAGE_NAME} .'
-            }
-        }
-
-        stage('Push to EC2 and Deploy') {
+        stage('Deploy to EC2 with Docker Compose') {
             steps {
                 sshagent (credentials: [env.REMOTE_KEY]) {
                     sh """
                     ssh -o StrictHostKeyChecking=no $REMOTE_HOST << 'ENDSSH'
-                        docker stop ${CONTAINER_NAME} || true
-                        docker rm ${CONTAINER_NAME} || true
-                        docker rmi ${IMAGE_NAME} || true
-                        cd ~/AWS_instance
+                        cd ~/${REPO_NAME}
                         git pull origin main
-                        docker build -t ${IMAGE_NAME} .
-                        docker run -d --name ${CONTAINER_NAME} -p 8000:8000 ${IMAGE_NAME}
+
+                        docker-compose down || true
+                        docker-compose build
+                        docker-compose up -d
                     ENDSSH
                     """
                 }
             }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Deployment complete!"
+        }
+        failure {
+            echo "❌ Deployment failed!"
         }
     }
 }
