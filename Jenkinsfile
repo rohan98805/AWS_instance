@@ -15,11 +15,18 @@ pipeline {
 
         stage('Login to AWS ECR') {
             steps {
-                sh '''
-                aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPO
-                '''
+                withCredentials([usernamePassword(credentialsId: 'aws-credentials',
+                                                  usernameVariable: 'AWS_ACCESS_KEY_ID',
+                                                  passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    sh '''
+                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                    aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPO
+                    '''
+                }
             }
         }
+
 
         stage('Build Docker Image') {
             steps {
