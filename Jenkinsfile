@@ -7,64 +7,46 @@ pipeline {
         IMAGE_TAG = "latest"
         GIT_REPO = "https://github.com/rohan98805/AWS_instance.git"
         GIT_BRANCH = "main"
-        GIT_CREDENTIALS_ID = "github-credentials"
-        AWS_CREDENTIALS_ID = "aws-credentials"
+        GIT_CREDENTIALS_ID = "github-credentials"  // Make sure this exists in Jenkins Credentials
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                git branch: env.GIT_BRANCH,
-                    credentialsId: env.GIT_CREDENTIALS_ID,
-                    url: env.GIT_REPO
+                git branch: "${GIT_BRANCH}",
+                    credentialsId: "${GIT_CREDENTIALS_ID}",
+                    url: "${GIT_REPO}"
             }
         }
 
         stage('Login to AWS ECR') {
-    steps {
-        withCredentials([usernamePassword(
-            credentialsId: env.AWS_CREDENTIALS_ID,
-            usernameVariable: 'AWS_ACCESS_KEY_ID',
-            passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                
-            sh '''
-            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-            export AWS_DEFAULT_REGION=${AWS_REGION}
-
-            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
-            '''
+            steps {
+                sh """
+                    aws configure set default.region ${AWS_REGION}
+                    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
+                """
+            }
         }
-    }
-}
-
 
         stage('Build Docker Image') {
             steps {
-                sh """
-                docker build -t ${ECR_REPO}:${IMAGE_TAG} .
-                """
+                sh "docker build -t ${ECR_REPO}:${IMAGE_TAG} ."
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                sh """
-                docker push ${ECR_REPO}:${IMAGE_TAG}
-                """
+                sh "docker push ${ECR_REPO}:${IMAGE_TAG}"
             }
         }
-
-        // Optional: Add a stage to deploy the container to EC2 via SSH or other means
-
     }
 
     post {
         success {
-            echo 'Pipeline completed successfully.'
+            echo '✅ Pipeline completed successfully.'
         }
         failure {
-            echo 'Pipeline failed. Please check the logs.'
+            echo '❌ Pipeline failed. Please check the logs.'
         }
     }
 }
