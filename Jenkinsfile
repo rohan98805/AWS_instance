@@ -2,51 +2,47 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = "us-east-1"
-        ECR_REPO = "160885287414.dkr.ecr.us-east-1.amazonaws.com/my-app-repo"
-        IMAGE_TAG = "latest"
-        GIT_REPO = "https://github.com/rohan98805/AWS_instance.git"
-        GIT_BRANCH = "main"
-        GIT_CREDENTIALS_ID = "github-credentials"  // Make sure this exists in Jenkins Credentials
+        AWS_REGION = 'us-east-1'
+        IMAGE_NAME = 'my-app'
+        ECR_REPO = '160885287414.dkr.ecr.us-east-1.amazonaws.com/my-app-repo'
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git branch: "${GIT_BRANCH}",
-                    credentialsId: "${GIT_CREDENTIALS_ID}",
-                    url: "${GIT_REPO}"
+                git credentialsId: 'github-credentials', url: 'https://github.com/rohan98805/AWS_instance.git', branch: 'main'
             }
         }
 
         stage('Login to AWS ECR') {
             steps {
-                sh """
-                    aws configure set default.region ${AWS_REGION}
-                    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
-                """
+                script {
+                    sh 'aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO'
+                }
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${ECR_REPO}:${IMAGE_TAG} ."
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Tag and Push to ECR') {
             steps {
-                sh "docker push ${ECR_REPO}:${IMAGE_TAG}"
+                script {
+                    sh '''
+                        docker tag $IMAGE_NAME:latest $ECR_REPO:latest
+                        docker push $ECR_REPO:latest
+                    '''
+                }
             }
         }
-    }
 
-    post {
-        success {
-            echo '✅ Pipeline completed successfully.'
-        }
-        failure {
-            echo '❌ Pipeline failed. Please check the logs.'
+        stage('Clean Up') {
+            steps {
+                sh 'docker rmi $IMAGE_NAME $ECR_REPO:latest || true'
+            }
         }
     }
 }
