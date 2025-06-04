@@ -1,3 +1,4 @@
 django
 gunicorn>=21.2.0
 whitenoise>=6.6.0 
+crispy-bootstrap5==0.7
